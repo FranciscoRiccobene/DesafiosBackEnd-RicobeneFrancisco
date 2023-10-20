@@ -25,5 +25,68 @@
     "thumbnail": "Ruta de imagen",
     "code": 12324324,
     "stock": 40
+  },
+  {
+    "id": 4,
+    "title": "Sandía",
+    "description": "Descripción de la sandía",
+    "price": 900,
+    "thumbnail": "Ruta de imagen",
+    "code": 43756234,
+    "stock": 20
+  },
+  {
+    "id": 5,
+    "title": "Uvas",
+    "description": "Descripción de las uvas",
+    "price": 700,
+    "thumbnail": "Ruta de imagen",
+    "code": 90678432,
+    "stock": 50
+  },
+  {
+    "id": 6,
+    "title": "Ciruela",
+    "description": "Descripción de las ciruela",
+    "price": 200,
+    "thumbnail": "Ruta de imagen",
+    "code": 67534789,
+    "stock": 80
+  },
+  {
+    "id": 7,
+    "title": "Mandarina",
+    "description": "Descripción de la mandarina",
+    "price": 130,
+    "thumbnail": "Ruta de imagen",
+    "code": 78456312,
+    "stock": 70
+  },
+  {
+    "id": 8,
+    "title": "Kiwi",
+    "description": "Descripción del kiwi",
+    "price": 350,
+    "thumbnail": "Ruta de imagen",
+    "code": 89496712,
+    "stock": 35
+  },
+  {
+    "id": 9,
+    "title": "Cebolla",
+    "description": "Descripción de la cebolla",
+    "price": 80,
+    "thumbnail": "Ruta de imagen",
+    "code": 54057812,
+    "stock": 110
+  },
+  {
+    "id": 10,
+    "title": "Morrón",
+    "description": "Descripción del morrón",
+    "price": 400,
+    "thumbnail": "Ruta de imagen",
+    "code": 45723904,
+    "stock": 40
   }
 ]
