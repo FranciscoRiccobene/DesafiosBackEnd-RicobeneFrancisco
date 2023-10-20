@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "title": "Naranja",
+    "description": "Descripción de la naranja",
+    "price": 90,
+    "thumbnail": "Ruta de imagen",
+    "code": 12345678,
+    "stock": 55
+  },
+  {
+    "id": 2,
+    "title": "Manzana",
+    "description": "Descripción de la manzana",
+    "price": 130,
+    "thumbnail": "Ruta de imagen",
+    "code": 23411112,
+    "stock": 70
+  },
+  {
+    "id": 3,
+    "title": "Banana",
+    "description": "Descripción de la banana",
+    "price": 70,
+    "thumbnail": "Ruta de imagen",
+    "code": 12324324,
+    "stock": 40
+  }
+]
