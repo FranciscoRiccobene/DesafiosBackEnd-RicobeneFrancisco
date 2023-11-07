@@ -1,92 +1,146 @@
 [
   {
-    "id": 1,
-    "title": "Naranja",
-    "description": "Descripción de la naranja",
-    "price": 90,
-    "thumbnail": "Ruta de imagen",
-    "code": 12345678,
-    "stock": 55
-  },
-  {
-    "id": 2,
-    "title": "Manzana",
-    "description": "Descripción de la manzana",
-    "price": 130,
-    "thumbnail": "Ruta de imagen",
-    "code": 23411112,
-    "stock": 70
-  },
-  {
     "id": 3,
     "title": "Banana",
     "description": "Descripción de la banana",
     "price": 70,
-    "thumbnail": "Ruta de imagen",
-    "code": 12324324,
-    "stock": 40
+    "status": true,
+    "code": "BCA231",
+    "stock": 40,
+    "category": "fruta",
+    "thumbnails": [
+      "Ruta de imagen"
+    ]
   },
   {
     "id": 4,
     "title": "Sandía",
     "description": "Descripción de la sandía",
     "price": 900,
-    "thumbnail": "Ruta de imagen",
-    "code": 43756234,
-    "stock": 20
+    "status": true,
+    "code": "DFG543",
+    "stock": 20,
+    "category": "fruta",
+    "thumbnails": [
+      "Ruta de imagen"
+    ]
   },
   {
     "id": 5,
     "title": "Uvas",
     "description": "Descripción de las uvas",
     "price": 700,
-    "thumbnail": "Ruta de imagen",
-    "code": 90678432,
-    "stock": 50
+    "status": true,
+    "code": "JHG324",
+    "stock": 50,
+    "category": "fruta",
+    "thumbnails": [
+      "Ruta de imagen"
+    ]
   },
   {
     "id": 6,
     "title": "Ciruela",
     "description": "Descripción de las ciruela",
     "price": 200,
-    "thumbnail": "Ruta de imagen",
-    "code": 67534789,
-    "stock": 80
+    "status": true,
+    "code": "KML123",
+    "stock": 80,
+    "category": "fruta",
+    "thumbnails": [
+      "Ruta de imagen"
+    ]
   },
   {
     "id": 7,
     "title": "Mandarina",
     "description": "Descripción de la mandarina",
     "price": 130,
-    "thumbnail": "Ruta de imagen",
-    "code": 78456312,
-    "stock": 70
+    "status": true,
+    "code": "LNM321",
+    "stock": 70,
+    "category": "fruta",
+    "thumbnails": [
+      "Ruta de imagen"
+    ]
   },
   {
     "id": 8,
     "title": "Kiwi",
     "description": "Descripción del kiwi",
     "price": 350,
-    "thumbnail": "Ruta de imagen",
-    "code": 89496712,
-    "stock": 35
+    "status": true,
+    "code": "ABC987",
+    "stock": 35,
+    "category": "fruta",
+    "thumbnails": [
+      "Ruta de imagen"
+    ]
   },
   {
     "id": 9,
     "title": "Cebolla",
     "description": "Descripción de la cebolla",
     "price": 80,
-    "thumbnail": "Ruta de imagen",
-    "code": 54057812,
-    "stock": 110
+    "status": true,
+    "code": "DCA543",
+    "stock": 110,
+    "category": "verdura",
+    "thumbnails": [
+      "Ruta de imagen"
+    ]
   },
   {
-    "id": 10,
+    "id": 11,
+    "title": "Pepino",
+    "description": "Descripción del pepino",
+    "code": "MNS124",
+    "price": 89,
+    "status": true,
+    "stock": 100,
+    "category": "verdura",
+    "thumbnails": [
+      "URL de la imagen 1",
+      "URL de la imagen 2"
+    ]
+  },
+  {
+    "id": 12,
     "title": "Morrón",
-    "description": "Descripción del morrón",
-    "price": 400,
-    "thumbnail": "Ruta de imagen",
-    "code": 45723904,
-    "stock": 40
+    "description": "Descripción del morron",
+    "code": "KFD784",
+    "price": 450,
+    "status": true,
+    "stock": 20,
+    "category": "verdura",
+    "thumbnails": [
+      "Ruta de imagen"
+    ]
+  },
+  {
+    "id": 13,
+    "title": "Calabaza",
+    "description": "Descripción de la calabaza",
+    "code": "LDC782",
+    "price": 830,
+    "status": true,
+    "stock": 45,
+    "category": "verdura",
+    "thumbnails": [
+      "Ruta de imagen"
+    ]
+  },
+  {
+    "id": 16,
+    "title": "Melón",
+    "description": "Descripción del melón",
+    "code": "ALSd12341",
+    "price": 1100,
+    "status": true,
+    "stock": 24,
+    "category": "fruta",
+    "thumbnails": [
+      "Ruta de imagen"
+    ]
   }
 ]

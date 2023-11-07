@@ -1,43 +1,33 @@
 import express from "express";
-import ProductManager from "./ProductManager.js";
+import __dirname from "./utils.js";
+import handlebars from "express-handlebars";
+import { viewRouter } from "./routes/views.router.js";
+import { Server } from "socket.io";
+import { productRouter } from "./routes/products.router.js";
+import { cartRouter } from "./routes/carts.router.js";
 
 const app = express();
 const port = 8080;
-const productManager = new ProductManager();
-
-app.get("/products", async (req, res) => {
-  const limit = req.query.limit;
-  try {
-    const products = await productManager.getProducts();
-
-    if (limit) {
-      const limitedProducts = products.slice(0, parseInt(limit));
-      res.status(200).json({ products: limitedProducts });
-    } else {
-      res.status(200).json({ products });
-    }
-  } catch (error) {
-    console.error(`Error reading products file: ${error}`);
-    res.status(500).json({ message: "Internal Serve Error" });
-  }
+const httpServer = app.listen(port, () => {
+  console.log("Express server working on port:", port);
 });
 
-app.get("/products/:pid", async (req, res) => {
-  const productId = parseInt(req.params.pid);
-  try {
-    const product = await productManager.getProductById(productId);
-    
-    if (product) {
-      res.status(200).json({ product: product });
-    } else {
-      res.status(404).json({ message: "Product not found" });
-    }
-  } catch (error) {
-    console.error(`Error reading products file: ${error}`);
-    res.status(500).json({ message: "Internal Serve Error" });
-  }
+const io = new Server(httpServer);
+
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+app.engine("handlebars", handlebars.engine());
+app.set("views", `${__dirname}/views`);
+app.set("view engine", "handlebars");
+app.use(express.static(__dirname + "/public"));
+app.use("/", viewRouter);
+
+app.use("/api/products", productRouter);
+app.use("/api/carts", cartRouter);
+
+io.on("connection", (socket) => {
+  console.log("A client has connected");
 });
 
-app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
-});
+export { io };
