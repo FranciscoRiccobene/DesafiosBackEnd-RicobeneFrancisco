@@ -1,12 +1,14 @@
 import express from "express";
-import CartManager from "../CartManager.js";
+import Carts from "../models/carts.model.js";
+
 const cartRouter = express.Router();
-const cartManager = new CartManager();
 
 cartRouter.post("/", async (req, res) => {
   try {
-    const newCart = await cartManager.createCart();
-    res.status(201).json(newCart);
+    const newCart = new Carts(req.body);
+    const savedCart = await newCart.save();
+
+    res.status(201).json(savedCart);
   } catch (err) {
     console.error(`Error creating cart ${err}`);
     res.status(500).json({ message: "Error creating cart" });
@@ -14,13 +16,12 @@ cartRouter.post("/", async (req, res) => {
 });
 
 cartRouter.get("/:cid", async (req, res) => {
-  const cartId = parseInt(req.params.cid);
   try {
-    const cart = await cartManager.getCartById(cartId);
-    if (!cart) {
+    const obtainedCart = await Carts.findById(req.params.cid);
+    if (!obtainedCart) {
       res.status(404).json({ message: "Cart not found" });
     } else {
-      res.status(200).json(cart.products);
+      res.status(200).json(obtainedCart);
     }
   } catch (err) {
     console.error(`Error getting cart ${err}`);
@@ -29,27 +30,27 @@ cartRouter.get("/:cid", async (req, res) => {
 });
 
 cartRouter.post("/:cid/product/:pid", async (req, res) => {
-  const cartId = parseInt(req.params.cid);
-  const productId = parseInt(req.params.pid);
-  const quantity = req.body.quantity || 1;
-
-  if (isNaN(cartId) || isNaN(productId)) {
-    res.status(400).json({ message: "Invalid cart ID or product ID" });
-    return;
-  }
+  const { cid, pid } = req.params;
+  const { quantity } = req.body;
 
   try {
-    const updatedCart = await cartManager.addProductToCart(
-      cartId,
-      productId,
-      quantity
-    );
+    const cart = await Carts.findById(cid);
 
-    if (updatedCart) {
-      res.status(200).json(updatedCart.products);
-    } else {
-      res.status(404).json({ message: "Cart not found" });
+    if (!cart) {
+      return res.status(404).json({ message: "Cart not found" });
     }
+
+    const existingProduct = cart.products.find((p) => p.product.equals(pid));
+
+    if (existingProduct) {
+      existingProduct.quantity += quantity || 1;
+    } else {
+      cart.products.push({ product: pid, quantity: quantity || 1 });
+    }
+
+    const updatedCart = await cart.save();
+
+    res.status(200).json(updatedCart);
   } catch (err) {
     console.error(`Error adding product to cart: ${err}`);
     res.status(500).json({ message: "Error adding product to cart" });

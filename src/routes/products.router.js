@@ -1,14 +1,16 @@
 import express from "express";
 import { io } from "../app.js";
-import ProductManager from "../ProductManager.js";
+import ProductDbManager from "../dao/ProductDbManager.js";
+import Products from "../models/products.model.js";
+
 const productRouter = express.Router();
-const productManager = new ProductManager();
+const productDbManager = new ProductDbManager();
 
 productRouter.get("/", async (req, res) => {
   const { limit } = req.query;
 
   try {
-    const products = await productManager.getProducts();
+    const products = await productDbManager.getProductsFromDb();
 
     if (limit) {
       const limitedProducts = products.slice(0, parseInt(limit));
@@ -17,16 +19,14 @@ productRouter.get("/", async (req, res) => {
       res.status(200).json({ products });
     }
   } catch (err) {
-    console.error(`Error reading products file: ${err}`);
+    console.error(`Error reading products from database: ${err}`);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
 productRouter.get("/:pid", async (req, res) => {
-  const productId = parseInt(req.params.pid);
-
   try {
-    const obtainedProduct = await productManager.getProductById(productId);
+    const obtainedProduct = await Products.findById(req.params.pid);
 
     if (obtainedProduct) {
       res.status(200).json({ product: obtainedProduct });
@@ -40,63 +40,32 @@ productRouter.get("/:pid", async (req, res) => {
 });
 
 productRouter.post("/", async (req, res) => {
+  const { title, description, code, price, status, stock, category } = req.body;
+
+  if (
+    !title ||
+    !description ||
+    !code ||
+    !price ||
+    !status ||
+    !stock ||
+    !category
+  ) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
+  const existingProduct = await Products.findOne({ code });
+  if (existingProduct) {
+    return res.status(400).json({ message: "The code is already in use" });
+  }
+
+  const products = new Products(req.body);
+
   try {
-    const products = await productManager.getProducts();
+    const newProduct = await products.save();
 
-    const maxProductId = Math.max(...products.map((product) => product.id));
-    let productIdCounter = maxProductId + 1;
-
-    function generateProductId() {
-      const productId = productIdCounter;
-      productIdCounter++;
-      return productId;
-    }
-
-    const {
-      title,
-      description,
-      code,
-      price,
-      status,
-      stock,
-      category,
-      thumbnails,
-    } = req.body;
-
-    if (
-      !title ||
-      !description ||
-      !code ||
-      !price ||
-      !status ||
-      !stock ||
-      !category
-    ) {
-      return res.status(400).json({ message: "All fields are required" });
-    }
-
-    const verifyCode = products.find((product) => product.code === code);
-    if (verifyCode) {
-      return res.status(400).json({ message: "The code is already in use" });
-    }
-
-    const id = generateProductId();
-    const newProduct = {
-      id: id,
-      title: title,
-      description: description,
-      code: code,
-      price: price,
-      status: status,
-      stock: stock,
-      category: category,
-      thumbnails: thumbnails || [],
-    };
-
-    products.push(newProduct);
-    await productManager.writeProductsToFile(products);
     io.emit("productAdded", newProduct);
-    
+
     res.status(201).json(newProduct);
   } catch (err) {
     console.error(`Error adding product: ${err}`);
@@ -105,16 +74,17 @@ productRouter.post("/", async (req, res) => {
 });
 
 productRouter.put("/:pid", async (req, res) => {
-  const productId = parseInt(req.params.pid);
-  const uptdatedFields = req.body;
-
   try {
-    const data = await productManager.updateProduct(productId, uptdatedFields);
+    const productToUpdate = await Products.findOneAndUpdate(
+      { _id: req.params.pid },
+      req.body,
+      { new: true }
+    );
 
-    if (data === "Product updated") {
-      res.status(201).json({ message: "Product updated" });
-    } else if (data === "Product not found") {
+    if (!productToUpdate) {
       res.status(404).json({ message: "Product not found" });
+    } else {
+      res.status(200).json(productToUpdate);
     }
   } catch (err) {
     console.error(`Error updating product: ${err}`);
@@ -123,17 +93,15 @@ productRouter.put("/:pid", async (req, res) => {
 });
 
 productRouter.delete("/:pid", async (req, res) => {
-  const productId = parseInt(req.params.pid);
-
   try {
-    const data = await productManager.deleteProduct(productId);
+    const productToDelete = await Products.findByIdAndDelete(req.params.pid);
 
-    if (data === "Product deleted") {
-      io.emit("productDeleted", productId);
+    if (!productToDelete) {
+      res.status(404).json({ message: "Product not found" });
+    } else {
+      io.emit("Product deleted", productToDelete);
 
       res.status(204).json({ message: "Product deleted" });
-    } else if (data === "Product not found") {
-      res.status(404).json({ message: "Product not found" });
     }
   } catch (err) {
     console.error(`Error deleting product: ${err}`);

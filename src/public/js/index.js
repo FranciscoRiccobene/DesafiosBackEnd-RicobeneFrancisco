@@ -17,14 +17,3 @@ socket.on("productDeleted", (productId) => {
     productList.removeChild(productToDelete);
   }
 });
-
-// document.addEventListener("DOMContentLoaded", () => {
-//   document.getElementById("productForm").addEventListener("submit", (e) => {
-//     e.preventDefault();
-//     const productName = document.getElementById("productTitle").value;
-//     const productPrice = document.getElementById("productPrice").value;
-//     socket.emit("newProduct", { title: productName, price: productPrice });
-//     document.getElementById("productTitle").value = "";
-//     document.getElementById("productPrice").value = "";
-//   });
-// });

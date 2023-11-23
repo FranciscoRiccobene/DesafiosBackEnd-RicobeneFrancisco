@@ -1,13 +1,18 @@
 import fs from "fs";
+import Products from "../models/products.model.js";
 
 class ProductManager {
   constructor() {
     this.products = this.readProductsFromFile();
-    this.path = "products.json";
+    this.path = "src/products.json";
   }
 
   async writeProductsToFile(products) {
-    await fs.promises.writeFile(this.path, JSON.stringify(products, null, 2), "utf-8");
+    await fs.promises.writeFile(
+      this.path,
+      JSON.stringify(products, null, 2),
+      "utf-8"
+    );
   }
 
   async readProductsFromFile() {
