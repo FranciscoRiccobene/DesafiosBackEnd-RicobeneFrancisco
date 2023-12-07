@@ -1,5 +1,4 @@
 import fs from "fs";
-import Products from "../models/products.model.js";
 
 class ProductManager {
   constructor() {

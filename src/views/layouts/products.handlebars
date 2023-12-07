@@ -1,0 +1,25 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lista de Productos</title>
+  </head>
+  <body>
+    {{#if user}}
+      <h1>Bienvenido, {{user.first_name}}!</h1>
+      <h4>Tu rol es: {{user.role}}</h4>
+    {{/if}}
+    <h2>Lista de Productos</h2>
+    <ul>
+      {{#each products}}
+        <li>
+          <strong>{{title}}</strong>
+          - Precio: ${{price}}
+        </li>
+      {{/each}}
+    </ul>
+    <form action="/logout" method="get">
+      <button type="submit">Logout</button>
+    </form>
+  </body>
+</html>
