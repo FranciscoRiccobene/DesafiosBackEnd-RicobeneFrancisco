@@ -1,12 +1,26 @@
 import userModel from "../models/users.model.js";
+import { createHash, isValidPassword } from "../utils.js";
 
 export const userRegister = async (req, res) => {
   try {
     const { first_name, last_name, email, age, password } = req.body;
 
-    const user = new userModel({ first_name, last_name, email, age, password });
+    if (!first_name || !last_name || !email || !age || !password) {
+      return res
+        .status(401)
+        .send({ status: "Error", error: "Incomplete values" });
+    }
+
+    const user = new userModel({
+      first_name,
+      last_name,
+      email,
+      age,
+      password: createHash(password),
+    });
 
     await user.save();
+
     req.session.user = {
       email: user.email,
       first_name: user.first_name,
@@ -34,25 +48,33 @@ export const userLogin = async (req, res) => {
       req.session.admin = true;
       res.redirect("/products");
     } else {
-      const user = await userModel.findOne({ email, password });
+      const user = await userModel.findOne(
+        { email },
+        { email: 1, first_name: 1, last_name: 1, age: 1, password: 1, role: 1 }
+      );
 
-      if (user) {
-        req.session.user = {
-          email: user.email,
-          first_name: user.first_name,
-          last_name: user.last_name,
-          role: user.role,
-          age: user.age,
-        };
-        req.session.admin = false;
-        res.redirect("/products");
-      } else {
-        console.log("User or password incorrect");
-        res.redirect("/");
-      }
+      if (!user)
+        return res
+          .status(401)
+          .send({ status: "Error", error: "User or password incorrect" });
+
+      if (!isValidPassword(user, password))
+        return res
+          .status(401)
+          .send({ status: "Error", error: "User or password incorrect" });
+
+      req.session.user = {
+        email: user.email,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        role: user.role,
+        age: user.age,
+      };
+      req.session.admin = false;
+      res.redirect("/products");
     }
   } catch (error) {
-    console.error("Error login user", error);
+    console.error("Error handling login", error);
     res.redirect("/");
   }
 };
