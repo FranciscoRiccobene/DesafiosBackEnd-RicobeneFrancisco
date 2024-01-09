@@ -6,7 +6,7 @@ import session from "express-session";
 import handlebars from "express-handlebars";
 import cookieParser from "cookie-parser";
 import __dirname from "./utils.js";
-import "dotenv/config";
+import config from "./config/config.js";
 import passport from "passport";
 import initializePassport from "./config/passport.config.js";
 
@@ -19,7 +19,7 @@ import sessionsApiRouter from "./routes/api/sessions.js";
 
 // Config para conectar al servidor
 const app = express();
-const port = 8080;
+const port = config.PORT;
 const httpServer = app.listen(port, () => {
   console.log("Express server working on port:", port);
 });
@@ -28,11 +28,11 @@ const io = new Server(httpServer);
 // Config de middleware para sesiones usando connect-mongo
 app.use(
   session({
-    secret: process.env.HASH, // Clave secreta para firmar las cookies de sesión
+    secret: config.HASH, // Clave secreta para firmar las cookies de sesión
     resave: false, // Evitar que guarde sesión en cada solicitud
     saveUninitialized: true, // Guardar la sesión incluso si no se ha modificado
     store: MongoStore.create({
-      mongoUrl: process.env.MONGO, // Url de conección a la db en mongo
+      mongoUrl: config.MONGO, // Url de conección a la db en mongo
       ttl: 2 * 60, // Tiempo de vida de la sesión en segundos (2m en este caso)
       dbName: "eccomerce", // Nombre de la base de datos a utilizar
     }),

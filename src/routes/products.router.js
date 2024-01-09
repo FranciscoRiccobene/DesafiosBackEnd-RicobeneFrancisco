@@ -1,7 +1,7 @@
 import express from "express";
 import { io } from "../app.js";
 import ProductDbManager from "../dao/ProductDbManager.js";
-import Products from "../models/products.model.js";
+import Products from "../dao/models/products.model.js";
 
 const productRouter = express.Router();
 const productDbManager = new ProductDbManager();

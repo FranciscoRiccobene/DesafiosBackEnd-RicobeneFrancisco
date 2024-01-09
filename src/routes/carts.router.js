@@ -1,5 +1,5 @@
 import express from "express";
-import Carts from "../models/carts.model.js";
+import Carts from "../dao/models/carts.model.js";
 
 const cartRouter = express.Router();
 

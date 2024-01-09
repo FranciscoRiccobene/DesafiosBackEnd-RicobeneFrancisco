@@ -1,4 +1,4 @@
-import userModel from "../models/users.model.js";
+import userModel from "../dao/models/users.model.js";
 import { createHash, isValidPassword } from "../utils.js";
 
 export const userRegister = async (req, res) => {

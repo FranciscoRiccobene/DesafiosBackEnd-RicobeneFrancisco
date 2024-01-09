@@ -2,8 +2,8 @@ import passport from "passport";
 import local from "passport-local";
 import GitHubStrategy from "passport-github2";
 import { createHash, isValidPassword } from "../utils.js";
-import Users from "../models/users.model.js";
-import "dotenv/config";
+import Users from "../dao/models/users.model.js";
+import config from "./config.js";
 
 const LocalStrategy = local.Strategy;
 
@@ -77,19 +77,12 @@ const initializePassport = () => {
     "github",
     new GitHubStrategy(
       {
-        clientID: process.env.GIT_CLIENT_ID,
-        clientSecret: process.env.GIT_CLIENT_SECRET,
-        callbackURL: process.env.GIT_CALLBACK_URL,
+        clientID: config.GIT_CLIENT_ID,
+        clientSecret: config.GIT_CLIENT_SECRET,
+        callbackURL: config.GIT_CALLBACK_URL,
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
-          console.log(profile);
-
-          const originalPasswordValidator =
-            Users.schema.path("password").validators[0];
-            
-          Users.schema.path("password").validators = [];
-
           let user = await Users.findOne({ email: profile._json.email });
           if (!user) {
             let newUser = {
@@ -97,7 +90,7 @@ const initializePassport = () => {
               last_name: profile._json.name.split(" ").slice(1).join(" "),
               email: profile._json.email,
               age: 18,
-              password: "",
+              password: createHash(profile.id),
             };
 
             let result = await Users.create(newUser);
@@ -105,10 +98,6 @@ const initializePassport = () => {
           } else {
             done(null, user);
           }
-
-          Users.schema.path("password").validators = [
-            originalPasswordValidator,
-          ];
         } catch (error) {
           done(error);
         }
