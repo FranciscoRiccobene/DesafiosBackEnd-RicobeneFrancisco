@@ -1,99 +1,101 @@
-import userModel from "../dao/models/users.model.js";
+import Users from "../dao/models/users.model.js";
 import { createHash, isValidPassword } from "../utils.js";
+import config from "../config/config.js";
 
-export const userRegister = async (req, res) => {
+export const authRegister = async (req, username, password, done) => {
+  const { first_name, last_name, email, age } = req.body;
+
   try {
-    const { first_name, last_name, email, age, password } = req.body;
-
-    if (!first_name || !last_name || !email || !age || !password) {
-      return res
-        .status(401)
-        .send({ status: "Error", error: "Incomplete values" });
+    let user = await Users.findOne({ email: username });
+    if (user) {
+      console.log("User exists");
+      return done(null, false);
     }
 
-    const user = new userModel({
+    const newUser = {
       first_name,
       last_name,
       email,
       age,
       password: createHash(password),
-    });
-
-    await user.save();
-
-    req.session.user = {
-      email: user.email,
-      first_name: user.first_name,
-      last_name: user.last_name,
-      role: user.role,
-      age: user.age,
     };
-    res.redirect("/products");
+
+    let result = await Users.create(newUser);
+    return done(null, result);
   } catch (error) {
-    console.error("Error registering user", error);
-    res.redirect("/");
+    return done("Error obtaining user" + error);
   }
 };
 
-export const userLogin = async (req, res) => {
+export const authLogin = async (username, password, done) => {
   try {
-    const { email, password } = req.body;
-
-    if (email === "adminCoder@coder.com" && password === "adminCod3r123") {
-      req.session.user = {
+    if (username === config.ADMIN_EMAIL && password === config.ADMIN_PASSWORD) {
+      const adminUser = {
         first_name: "Admin",
-        email: "adminCoder@coder.com",
+        email: config.ADMIN_EMAIL,
         role: "admin",
       };
-      req.session.admin = true;
-      res.redirect("/products");
-    } else {
-      const user = await userModel.findOne(
-        { email },
-        { email: 1, first_name: 1, last_name: 1, age: 1, password: 1, role: 1 }
-      );
-
-      if (!user)
-        return res
-          .status(401)
-          .send({ status: "Error", error: "User or password incorrect" });
-
-      if (!isValidPassword(user, password))
-        return res
-          .status(401)
-          .send({ status: "Error", error: "User or password incorrect" });
-
-      req.session.user = {
-        email: user.email,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        role: user.role,
-        age: user.age,
-      };
-      req.session.admin = false;
-      res.redirect("/products");
+      return done(null, adminUser);
     }
+
+    let user = await Users.findOne({ email: username });
+    if (!user) {
+      console.log("User does not exist");
+      return done(null, false);
+    }
+
+    if (!isValidPassword(user, password)) return done(null, false);
+
+    return done(null, user);
   } catch (error) {
-    console.error("Error handling login", error);
-    res.redirect("/");
+    return done(error);
   }
 };
 
-export const logOut = async (req, res) => {
+export const githubAuth = async (accessToken, refreshToken, profile, done) => {
   try {
-    if (req.session.user) {
-      delete req.session.user;
-      req.session.destroy((err) => {
-        if (err) {
-          console.error("Logout user error", err);
-          res.status(500).send("Logout user error");
-        } else {
-          res.redirect("/");
-        }
-      });
+    let user = await Users.findOne({ email: profile._json.email });
+    if (!user) {
+      let newUser = {
+        first_name: profile._json.name.split(" ")[0],
+        last_name: profile._json.name.split(" ").slice(1).join(" "),
+        email: profile._json.email,
+        age: 18,
+        password: createHash(profile.id),
+      };
+
+      let result = await Users.create(newUser);
+      done(null, result);
+    } else {
+      done(null, user);
     }
   } catch (error) {
-    console.error("Logout error", error);
-    res.status(500).send({ message: "Logout error" });
+    done(error);
+  }
+};
+
+export const serializeUser = (user, done) => {
+  if (user.role === "admin") {
+    return done(null, "admin-id");
+  }
+
+  done(null, user._id);
+};
+
+export const deserializeUser = async (id, done) => {
+  try {
+    if (id === "admin-id") {
+      const adminUser = {
+        first_name: "Admin",
+        email: config.ADMIN_EMAIL,
+        role: "admin",
+      };
+      return done(null, adminUser);
+    }
+
+    let user = await Users.findById(id);
+    done(null, user);
+  } catch (error) {
+    done(error);
   }
 };

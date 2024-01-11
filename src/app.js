@@ -32,7 +32,7 @@ app.use(
     resave: false, // Evitar que guarde sesión en cada solicitud
     saveUninitialized: true, // Guardar la sesión incluso si no se ha modificado
     store: MongoStore.create({
-      mongoUrl: config.MONGO, // Url de conección a la db en mongo
+      mongoUrl: config.MONGO_URL, // Url de conección a la db en mongo
       ttl: 2 * 60, // Tiempo de vida de la sesión en segundos (2m en este caso)
       dbName: "eccomerce", // Nombre de la base de datos a utilizar
     }),

@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import config from "./config.js";
 
-mongoose.connect(config.MONGO, { dbName: "eccomerce" });
+mongoose.connect(config.MONGO_URL, { dbName: "eccomerce" });
 
 const db = mongoose.connection;
 
