@@ -27,3 +27,21 @@ export const realTimeProductsView = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+export const loginView = (req, res) => {
+  let data = {
+    layout: "main",
+    title: "Login",
+    actionLogin: "/api/sessions/login",
+  };
+  res.render("index", data);
+};
+
+export const registerView = (req, res) => {
+  let data = {
+    layout: "register",
+    title: "Registro de usuario",
+    actionRegister: "/api/sessions/register",
+  };
+  res.render("index", data);
+};

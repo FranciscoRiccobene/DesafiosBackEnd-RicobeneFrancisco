@@ -1,14 +1,8 @@
 import express from "express";
+import { loginView } from "../../controllers/views.controller.js";
 
 const loginRouter = express.Router();
 
-loginRouter.get("/", (req, res) => {
-  let data = {
-    layout: "main",
-    title: "Login",
-    actionLogin: "/api/sessions/login",
-  };
-  res.render("index", data);
-});
+loginRouter.get("/", loginView);
 
 export default loginRouter;

@@ -1,14 +1,8 @@
 import express from "express";
+import { registerView } from "../../controllers/views.controller.js";
 
 const registerRouter = express.Router();
 
-registerRouter.get("/", (req, res) => {
-  let data = {
-    layout: "register",
-    title: "Registro de usuario",
-    actionRegister: "/api/sessions/register",
-  };
-  res.render("index", data);
-});
+registerRouter.get("/", registerView);
 
 export default registerRouter;
